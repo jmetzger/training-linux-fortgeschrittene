@@ -1,4 +1,4 @@
-## systemctl 
+# systemctl 
 
 ```
 systemctl status sshd 
@@ -54,6 +54,13 @@ echo $?
 # wenn nicht aktiviert 
 echo $? 
 1 
+```
+
+## Service herausfinden (wenn aktiviert) 
+
+```
+# z.B. ssh 
+systemctl list-units -t service | grep ssh
 ```
 
 ## System runterfahren 
