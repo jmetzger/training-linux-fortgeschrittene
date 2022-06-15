@@ -2,6 +2,9 @@
 
 ## Agenda
 
+ 1. Systemd und Journalctl  
+     * [Systemd](systemd.md)
+     * [journalctl](journalctl.md)
 
 ## Backlog 
 
