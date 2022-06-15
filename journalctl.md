@@ -13,13 +13,44 @@ journalctl _PID=5
 
 # alles seit gestern 
 journalctl --since yesterday 
+# alles bis gestern 
+journalctl --until yesterday
 
 # sehr schön um alle felder zu sehen 
 journalctl -o json-pretty 
 ```
 
+## journalctl - Ausgabeformate 
 
+```
+journalctl -u ssh -o json-pretty 
 
+```
+
+## journalctl - Zeitbereiche 
+
+```
+journalctl -u ssh --since "2022-06-15 11:45"
+```
+
+## Nur die letzten Einträge, z.B. 5 
+
+```
+journalctl -u ssh --since "2022-06-15 11:45" -n 5
+```
+
+## ssh 
+
+```
+# Fenster 1 
+journalctl -u ssh -f 
+
+# Fenster 2:
+systemctl restart ssh
+
+# Back to Fenster 1 
+
+```
 
 ## Show all boots 
 
