@@ -6,6 +6,9 @@
      * [Systemd](systemd.md)
      * [journalctl](journalctl.md)
 
+ 1. Administration
+    * [Hostname setzen - hostnamectl](/hostnamectl.md) 
+
 ## Backlog 
 
   1. Grundlagen
