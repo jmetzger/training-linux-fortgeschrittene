@@ -1,4 +1,4 @@
-## 12 Prozesse (inkl. Kill) 
+## Prozesse (inkl. Kill) 
 
 ### pstree / Baum der Prozess anzeigen 
 
