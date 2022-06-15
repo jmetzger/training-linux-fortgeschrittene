@@ -8,6 +8,7 @@ journalctl -u ssh
 journalctl -u ssh.service 
 
 # alles was pid xy
+# man systemd.journal-fields 
 journalctl _PID=5 
 
 # alles seit gestern 
