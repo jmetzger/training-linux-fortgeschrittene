@@ -16,9 +16,10 @@
      * [Datei anlegen - touch](touch.md)
      * [Autovervollständen * und tab](autocomplete.md) 
      * [Welches Programm wird verwendet](which.md)
-
+ 
  1. Administration
     * [Hostname setzen - hostnamectl](/hostnamectl.md) 
+    * [Prozesse](/prozesse.md)
 
 ## Backlog 
 
@@ -72,8 +73,6 @@
      * [Benutzer](benutzer.md)
   1. Hilfreiche Programme 
      * [Hilfreiche Programme](hilfreiche-programme.md) 
-  1. Prozesse
-     * [Prozesse](prozesse.md)
   1. Dienste verwalten 
      * [Dienste](dienste.md) 
   1. Timer 
