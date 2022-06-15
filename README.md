@@ -6,6 +6,15 @@
      * [Systemd](systemd.md)
      * [journalctl](journalctl.md)
 
+ 1. Basisbefehle
+     * [In den Root-Benutzer wechseln](sudo.md)  
+     * [Wo bin ich ?](pwd.md)
+     * [Praktische Ausgabe von langen Seiten - less](less.md) 
+     * [Navigieren/Suchen in man-pages](man.md)
+     * [Datei anlegen - touch](touch.md)
+     * [Autovervollständen * und tab](autocomplete.md) 
+     * [Welches Programm wird verwendet](which.md)
+
  1. Administration
     * [Hostname setzen - hostnamectl](/hostnamectl.md) 
 
