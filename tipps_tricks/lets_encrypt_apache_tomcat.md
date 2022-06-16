@@ -40,10 +40,21 @@ apt install -y python3-certbot-apache
 certbot --apache 
 ```
 
+## On SLES 15 use snap 
+
+```
+# You need to install snapd beforehand 
+snap install --classic certbot
+certbot --apache 
+
+```
+
 ## References 
 
   * Take only as hint, some stuff is not optimal / like .well-known proxy pass missing
-  * https://metamug.com/article/networking/lets-encrypt-ssl-on-tomcat.html
+    * https://metamug.com/article/networking/lets-encrypt-ssl-on-tomcat.html
   * https://www.digitalocean.com/community/tutorials/how-to-secure-apache-with-let-s-encrypt-on-ubuntu-20-04-de
+  * for SuSE using snap:
+    * https://snapcraft.io/install/certbot/opensuse 
 
 
