@@ -66,3 +66,7 @@ PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 ls -la /var/log/ausgabe-every-minute 
 
 ```
+ ## Debugging 
+ 
+   * systemctl status cron
+   * journactl -u cron 
