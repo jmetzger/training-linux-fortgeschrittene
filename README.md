@@ -20,6 +20,7 @@
  1. Administration
     * [Hostname setzen - hostnamectl](/hostnamectl.md) 
     * [Prozesse](/prozesse.md)
+    * [Cron](/cron.md)
 
  1. Fragen / Tipps&Tricks 
     * [Letsencrypt mit Apache und Tomcat](/tipps_tricks/lets_encrypt_apache_tomcat.md)
