@@ -22,6 +22,9 @@
     * [Prozesse](/prozesse.md)
     * [Cron](/cron.md)
 
+ 1. Remoteverbindungen
+    * [ssh public/private key](/ssh-public-private-key.md)
+
  1. Fragen / Tipps&Tricks 
     * [Letsencrypt mit Apache und Tomcat](/tipps_tricks/lets_encrypt_apache_tomcat.md)
     * [Grub mit Password absichern](/tipps_tricks/grub-mit-pw-sichern.md)
