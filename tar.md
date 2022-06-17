@@ -47,3 +47,8 @@ echo $?
 tar xvf _etc.20220617.tar.gz etc/sysctl.d/99-sysctl.conf etc/services
 ls -la
 ```
+
+
+## Referenz:
+
+  * https://linuxconfig.org/how-to-create-incremental-and-differential-backups-with-tar
