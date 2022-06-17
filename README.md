@@ -23,6 +23,7 @@
     * [Cron](/cron.md)
     * [Debuggen eines langsamen Systems ](/tipps_tricks/debug-slow-server.md)
     * [ssh-Server absichern](/ssh-server-absichern.md)
+    * [Wiederkehrende administratorische Tätigkeiten](/recurring-admin-tasks.md)
 
  1. Backups 
     * [Backups mit tar](tar.md)
