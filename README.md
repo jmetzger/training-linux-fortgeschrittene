@@ -30,6 +30,7 @@
     * [Letsencrypt mit Apache und Tomcat](/tipps_tricks/lets_encrypt_apache_tomcat.md)
     * [Grub mit Password absichern](/tipps_tricks/grub-mit-pw-sichern.md)
     * [Netzwerk Statistik](/tipps_tricks/netzwerk_statistik.md)
+    * [Langsamen Server debuggen](/tipps_tricks/debug-slow-server.md)
 
 ## Backlog 
 
