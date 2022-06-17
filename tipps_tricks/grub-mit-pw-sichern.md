@@ -18,9 +18,9 @@ password_pbkdf2 grub grub.pbkpdf2.sha512.....
 
 ```
 ## Wichtig: Dadurch läßt sich ohne Passwort booten 
-## Datei 10_linux unter  
+## Datei /etc/grub.d/10_linux unter  
 ## Variable CLASS anpassen 
-## am Ende von CLASS --unrestricted anfügn then 
+## am Ende von CLASS --unrestricted anfügen then 
 ## 
 CLASS="--class gnu-linux ..... --unrestricted" 
 ```
