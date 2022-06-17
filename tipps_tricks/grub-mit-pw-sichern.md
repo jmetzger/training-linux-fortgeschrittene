@@ -17,11 +17,6 @@ password_pbkdf2 grub grub.pbkpdf2.sha512.....
 ```
 
 ```
-## Rechte setzen 
-chmod a+x /etc/grub.d/01_password 
-```
-
-```
 ## Wichtig: Dadurch läßt sich ohne Passwort booten 
 ## Datei 10_linux unter  
 ## Variable CLASS anpassen 
