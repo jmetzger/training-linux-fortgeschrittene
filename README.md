@@ -24,6 +24,7 @@
     * [Debuggen eines langsamen Systems ](/tipps_tricks/debug-slow-server.md)
     * [ssh-Server absichern](/ssh-server-absichern.md)
     * [Wiederkehrende administratorische Tätigkeiten](/recurring-admin-tasks.md)
+    * [sudo-Benutzer](sudo.md)
 
  1. Backups 
     * [Backups mit tar](tar.md)
@@ -67,9 +68,7 @@
      * [dnf](dnf.md) 
      * [unattendend upgrades](unattended-upgrades.md)
   1. Filesysteme  
-     * [xfsdump und -restore](xfsdump-und-restore.md) 
-  1. Sudo 
-     * [sudo](sudo.md)
+     * [xfsdump und -restore](xfsdump-und-restore.md)
   1. ssh und scp 
      * [ssh](ssh.md) 
      * [scp](scp.md)
