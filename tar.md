@@ -1,6 +1,12 @@
 # tar 
 
-## 
+## Sichern / Backup 
+
+```
+cd /usr/src
+tar cfvz _etc.20220617.tar.gz /etc
+tar tf _etc.20220617.tar.gz
+```
 
 
 ## Entpacken (Vorbereitung) 
