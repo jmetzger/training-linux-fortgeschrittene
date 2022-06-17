@@ -51,5 +51,3 @@ journalctl -u ssh
 tail -n 50 /var/log/auth.og
 
 ```
-
-```
