@@ -21,6 +21,7 @@
     * [Hostname setzen - hostnamectl](/hostnamectl.md) 
     * [Prozesse](/prozesse.md)
     * [Cron](/cron.md)
+    * [Debuggen eines langsamen Systems ](/tipps_tricks/debug-slow-server.md)
 
  1. Remoteverbindungen
     * [ssh public/private key](/ssh-public-private-key.md)
