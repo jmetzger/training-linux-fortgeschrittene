@@ -22,6 +22,7 @@
     * [Prozesse](/prozesse.md)
     * [Cron](/cron.md)
     * [Debuggen eines langsamen Systems ](/tipps_tricks/debug-slow-server.md)
+    * [ssh-Server absichern](/ssh-server-absichern.md)
 
  1. Remoteverbindungen
     * [ssh public/private key](/ssh-public-private-key.md)
