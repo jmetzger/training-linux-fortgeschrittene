@@ -1,7 +1,41 @@
-# Linux Einführung 
+# Linux Fortgeschrittene 
 
 
 ## Agenda
+ 1. Systemd und Journalctl  
+     * [Systemd](#systemd)
+     * [systemd - run as multi user default](#systemd---run-as-multi-user-default)
+     * [systemctl cheatsheet](#systemctl-cheatsheet)
+     * [journalctl](#journalctl)
+
+ 1. Basisbefehle
+     * [In den Root-Benutzer wechseln](#in-den-root-benutzer-wechseln)
+     * [Wo bin ich ?](#wo-bin-ich-)
+     * [Praktische Ausgabe von langen Seiten - less](#praktische-ausgabe-von-langen-seiten---less)
+     * [Navigieren/Suchen in man-pages](#navigierensuchen-in-man-pages)
+     * [Datei anlegen - touch](#datei-anlegen---touch)
+     * [Autovervollständen * und tab](#autovervollständen--und-tab)
+     * [Welches Programm wird verwendet](#welches-programm-wird-verwendet)
+ 
+ 1. Administration
+    * [Hostname setzen - hostnamectl](/hostnamectl.md) 
+    * [Prozesse](/prozesse.md)
+    * [Cron](/cron.md)
+    * [Debuggen eines langsamen Systems ](/tipps_tricks/debug-slow-server.md)
+    * [ssh-Server absichern](/ssh-server-absichern.md)
+
+ 1. Remoteverbindungen
+    * [ssh public/private key](/ssh-public-private-key.md)
+
+ 1. Fragen / Tipps&Tricks 
+    * [Letsencrypt mit Apache und Tomcat](/tipps_tricks/lets_encrypt_apache_tomcat.md)
+    * [Grub mit Password absichern](/tipps_tricks/grub-mit-pw-sichern.md)
+    * [Netzwerk Statistik](/tipps_tricks/netzwerk_statistik.md)
+    * [Langsamen Server debuggen](/tipps_tricks/debug-slow-server.md)
+    * [Kleinen Server mit xinetd](/tipps_tricks/kleinen-server-mit-xinetd.md)
+
+## Backlog 
+
   1. Grundlagen
      * [Grundlagen](#grundlagen)
   1. Systemd und Journalctl  
@@ -52,34 +86,23 @@
      * [Benutzer](#benutzer)
   1. Hilfreiche Programme 
      * [Hilfreiche Programme](#hilfreiche-programme)
-  1. Prozesse
-     * [Prozesse](#prozesse)
   1. Dienste verwalten 
      * [Dienste](#dienste)
+  1. Timer 
+     * [Beispiel - Regelmäßiges Scannen mit nmap](#beispiel---regelmäßiges-scannen-mit-nmap)
   1. Fragen,Tipps und Tricks
      * [Questions](#questions)
      * [Tipps und Tricks](#tipps-und-tricks)
+  1. Documentation 
+     * [Digitalocean z.B. Apache ](https://www.digitalocean.com/community/tutorials/how-to-secure-apache-with-let-s-encrypt-on-ubuntu-20-04-de)
 
 
 <div class="page-break"></div>
-
-## Grundlagen
-
-### Grundlagen
-
-
-### Wann Linux, wann Windows ? 
-
-https://www.computerweekly.com/de/meinung/Das-beste-Server-Betriebssystem-Vergleich-zwischen-Linux-und-Windows#:~:text=Linux%20kommt%20im%20Data%20Center,viele%20verschiedene%20Einsatzzwecke%20zu%20verwenden.
-
-<div class="page-break"></div>
-
-## Systemd und Journalctl  
 
 ### Systemd
 
 
-### layers of systemd 
+### layers of systemd (Ebenen von Systemd)
 
 ```
 /lib/systemd/system  # never touch this is admin 
@@ -226,10 +249,152 @@ Tue 2020-11-24 00:00:00 CET  11h left   Mon 2020-11-23 09:28:30 CET  2h 57min ag
 ```
 
 
-<div class="page-break"></div>
+### systemd - run as multi user default
+
+
+```
+systemctl get-default # Was der aktuelle Endzustand nach booten 
+## z.B. graphical 
+
+## Während der Laufzeit in anderes Target wechseln 
+systemctl isolate multi-user.target 
+
+## Festlegen in welches Target er nach dem Booten gehen 
+systemctl set-default multi-user.target
+
+## Zum Testen 
+reboot 
+
+```
+
+### systemctl cheatsheet
+
+
+```
+systemctl status sshd 
+## Rausfinden welche aktivierten / laufenden Dienste 
+systemctl list-units -t service 
+## Rausfinde welche überhaupt 
+systemctl list-unit-files -t service 
+
+## Alle targets anzeigen 
+systemctl list-unit-files -t target  
+
+## is target aufrufbar ? 
+systemctl cat multi-user.target | grep AllowIsolate  # should be in last line 
+
+## default target anzeigen 
+## in welches target wird gebootet 
+systemctl get-default 
+systemctl set-default multi-user 
+
+## see configuration of units 
+systemctl cat multi-user.target 
+systemctl cat sshd.service # centos 
+
+## show running and next scheduled timers 
+systemctl list-timers 
+
+```
+
+### Dienste starten/aktivieren/deaktivieren/überprüfen 
+
+```
+systemctl start httpd 
+systemctl start apache2 
+
+systemctl status apache2 
+systemctl status httpd 
+
+systemctl enable apache2
+systemctl enable httpd
+
+## enable and start 
+systemctl enable --now apache2
+systemctl enable --now httpd 
+
+systemctl disable apache2
+systemctl disable httpd
+
+systemctl is-enabled apache2
+systemctl is-enabled httpd 
+## wichtig wenn enabled rückgabe wert 0
+echo $? 
+0
+## wenn nicht aktiviert 
+echo $? 
+1 
+```
+
+### Service herausfinden (wenn aktiviert) 
+
+```
+## z.B. ssh 
+systemctl list-units -t service | grep ssh
+```
+
+### System runterfahren 
+
+```
+## system runterfahren und ausschalten 
+systemctl poweroff 
+poweroff 
+```
 
 ### journalctl
 
+
+### journalctl 
+
+```
+## ubuntu
+journalctl -u ssh 
+journalctl -u ssh.service 
+
+## alles was pid xy
+## man systemd.journal-fields 
+journalctl _PID=5 
+
+## alles seit gestern 
+journalctl --since yesterday 
+## alles bis gestern 
+journalctl --until yesterday
+
+## sehr schön um alle felder zu sehen 
+journalctl -o json-pretty 
+```
+
+### journalctl - Ausgabeformate 
+
+```
+journalctl -u ssh -o json-pretty 
+
+```
+
+### journalctl - Zeitbereiche 
+
+```
+journalctl -u ssh --since "2022-06-15 11:45"
+```
+
+### Nur die letzten Einträge, z.B. 5 
+
+```
+journalctl -u ssh --since "2022-06-15 11:45" -n 5
+```
+
+### ssh 
+
+```
+## Fenster 1 
+journalctl -u ssh -f 
+
+## Fenster 2:
+systemctl restart ssh
+
+## Back to Fenster 1 
+
+```
 
 ### Show all boots 
 
@@ -260,25 +425,397 @@ systemctl restart systemd-journal-flush.service
 SystemMaxUse=1G 
 ```
 
+
+### In den Root-Benutzer wechseln
+
+
+#### Konfiguration 
+
+```
+Erfolgt in /etc/sudoers
+/etc/sudoers.d/ (Verzeichnis) 
+
+Entscheidend eine Zeile die mit % für Gruppe beginnt,
+z.B. mit passwort-eingabe des ausführenden Benutzers.
+
+Beispiel: Benutzer wäre training t
+training@foo$ sudo su - # Hier muss dann das Passwort von training eingegeben werden 
+
+## Allow members of group sudo to execute any command
+%sudo	ALL=(ALL:ALL) ALL
+## Nutzer training muss der Gruppe sudo angehören 
+
+```
+
+#### Konfigurations-Beispiel für Nobleprog 
+
+```
+root@jochen-g14d:/etc/sudoers.d# cat nobleprog 
+nobleprog ALL=(ALL:ALL) NOPASSWD:ALL
+```
+
+#### Sudo - User anlegen (root) 
+
+```
+apropos user # find command adduser 
+sudo adduser training 
+## is group sudo present on system 
+cat /etc/group | grep sudo
+man usermod # Supplementary Groups
+
+## Add user training to supplementary group
+usermod -aG sudo training 
+
+## Testing 
+su - training # change to user 
+sudo su - # find out if user training can execute sudo commands 
+```
+
+#### Einen Nutzer zum sudo nutzer machen 
+
+```
+## auf Debian / Ubuntu 
+## ist sudo also sudo - Gruppe definiert, die alles darf, was root darf
+usermod -aG sudo dein_benutzer 
+
+## auf Centos 
+usermod -aG wheel dein_benutzer 
+```
+
+#### Be careful to not have enabled rootpw = true  
+
+```
+## the you must enter your root password instead of the user password 
+
+```
+
+#### Eingeschränkte sudo - rechte für benutzer vergeben 
+
+```
+adduser wartung 
+cd /etc/sudoers.d 
+echo "wartung ALL=(ALL) /bin/systemctl restart httpd" > wartung 
+chmod 0440 wartung 
+
+
+### zum testen
+## from root user
+su - wartung 
+sudo systemctl restart httpd 
+```
+
+### Wo bin ich ?
+
+### Praktische Ausgabe von langen Seiten - less
+
+
+### Open a file with less 
+
+```
+## 
+less /etc/services 
+
+## Why ? 
+## Leichtere Navigation 
+```
+
+### Pipen mit less (ausgabe an less schicken) 
+
+```
+ls -la | less 
+cat /etc/services | less 
+```
+
+### Suchen in less 
+```
+##Innerhalb von less
+/suchbegriff + RETURN
+## nächstes Suchergebnis
+n 
+## Zurück zum letzten Suchergebnis 
+N
+```
+
+###  Springen ans Ende/an den Anfang  
+```
+## Innerhalb von less
+## ans Ende 
+G 
+## an den Anfang 
+1g 
+## zu einer bestimmten Zeile (Zeile 5)  
+5g 
+```
+
+### In die Hilfe rein 
+
+```
+h 
+## wieder raus
+q
+```
+
+### Navigieren/Suchen in man-pages
+
+
+```
+Es funktioniert genau so wie in less,
+weil dieser als Pager verwendet wird
+```
+
+[Navigation und suche wie in less](#praktische-ausgabe-von-langen-seiten---less)
+
+### Datei anlegen - touch
+
+### Autovervollständen * und tab
+
+### Welches Programm wird verwendet
+
+## Grundlagen
+
+### Grundlagen
+
+
+### Wann Linux, wann Windows ? 
+
+https://www.computerweekly.com/de/meinung/Das-beste-Server-Betriebssystem-Vergleich-zwischen-Linux-und-Windows#:~:text=Linux%20kommt%20im%20Data%20Center,viele%20verschiedene%20Einsatzzwecke%20zu%20verwenden.
+
+## Systemd und Journalctl  
+
+### Systemd
+
+
+### layers of systemd (Ebenen von Systemd)
+
+```
+/lib/systemd/system  # never touch this is admin 
+/etc/systemd/system
+/run/systemd/system 
+```
+
+### how it is started
+
+```
+units:
+
+Innerhalb eines Targets , ausführen von
+
+- service(s)
+- mount(s)
+- socket(s) 
+- timer (s)
+
+Oder/und
+     (sub)target(s) 
+        service
+        mount
+        timer
+        socket
+```
+
+### systemctl 
+
+```
+systemctl status sshd 
+## Rausfinden welche aktivierten / laufenden Dienste 
+systemctl list-units -t service 
+## Rausfinde welche überhaupt 
+systemctl list-unit-files -t service 
+
+## Alle targets anzeigen 
+systemctl list-unit-files -t target  
+
+## is target aufrufbar ? 
+systemctl cat multi-user.target | grep AllowIsolate  # should be in last line 
+
+## default target anzeigen 
+## in welches target wird gebootet 
+systemctl get-default 
+systemctl set-default multi-user 
+
+## see configuration of units 
+systemctl cat multi-user.target 
+systemctl cat sshd.service # centos 
+
+## show running and next scheduled timers 
+systemctl list-timers 
+
+```
+
+### Dienste starten/aktivieren/deaktivieren/überprüfen 
+
+```
+systemctl start httpd 
+systemctl start apache2 
+
+systemctl status apache2 
+systemctl status httpd 
+
+systemctl enable apache2
+systemctl enable httpd
+
+## enable and start 
+systemctl enable --now apache2
+systemctl enable --now httpd 
+
+systemctl disable apache2
+systemctl disable httpd
+
+systemctl is-enabled apache2
+systemctl is-enabled httpd 
+## wichtig wenn enabled rückgabe wert 0
+echo $? 
+0
+## wenn nicht aktiviert 
+echo $? 
+1 
+```
+
+### System runterfahren 
+
+```
+## system runterfahren und ausschalten 
+systemctl poweroff 
+poweroff 
+```
+
+### tmpfiles.d 
+
+  * Create manage temporary files 
+  
+```
+## just to have an idea how it works 
+cp -a /usr/lib/tmpfiles.d/tmp.conf /etc/tmpfiles.d/tmp.conf 
+
+## Edit file, that it has the following content 
+d /tmp/test 1777 root root -
+
+## Get in / - directory, to see that is works everywhere 
+cd /
+
+## Execute manually to check, if it works 
+systemd-tmpfiles --create 
+
+## check if dir exits
+ls -la /tmp/test 
+
+## Hint: Deleting and setup is done daily and on boot 
+## by the following services and timers:
+## systemctl list-unit-files | grep tmpfiles
+systemd-tmpfiles-clean.service             static          enabled
+systemd-tmpfiles-setup-dev.service         static          enabled
+systemd-tmpfiles-setup.service             static          enabled
+systemd-tmpfiles-clean.timer               static          enabled
+```
+
+### timers ## 
+
+```
+systemctl list-timers 
+```
+
+### journalctl ##
+
+```
+## show events of a specific unit 
+journalctl -u sshd.service 
+```
+
+### Example debugging of timer event 
+
+```
+systemctl list-timers  | head -n 3
+NEXT                         LEFT       LAST                         PASSED       UNIT                         ACTIVATES
+Mon 2020-11-23 13:11:17 CET  44min left Mon 2020-11-23 12:11:16 CET  15min ago    dnf-makecache.timer          dnf-makecache.service
+Tue 2020-11-24 00:00:00 CET  11h left   Mon 2020-11-23 09:28:30 CET  2h 57min ago unbound-anchor.timer         unbound-anchor.service
+[root@trn01 tmp]# journalctl -u dnf-makecache.service 
+```
+
+
+### journalctl
+
+
 ### journalctl 
 
 ```
 ## ubuntu
 journalctl -u ssh 
-## centos
-journalctl -u sshd 
+journalctl -u ssh.service 
 
 ## alles was pid xy
+## man systemd.journal-fields 
 journalctl _PID=5 
 
 ## alles seit gestern 
 journalctl --since yesterday 
+## alles bis gestern 
+journalctl --until yesterday
 
 ## sehr schön um alle felder zu sehen 
 journalctl -o json-pretty 
 ```
 
-<div class="page-break"></div>
+### journalctl - Ausgabeformate 
+
+```
+journalctl -u ssh -o json-pretty 
+
+```
+
+### journalctl - Zeitbereiche 
+
+```
+journalctl -u ssh --since "2022-06-15 11:45"
+```
+
+### Nur die letzten Einträge, z.B. 5 
+
+```
+journalctl -u ssh --since "2022-06-15 11:45" -n 5
+```
+
+### ssh 
+
+```
+## Fenster 1 
+journalctl -u ssh -f 
+
+## Fenster 2:
+systemctl restart ssh
+
+## Back to Fenster 1 
+
+```
+
+### Show all boots 
+
+``` 
+ journalctl --list-boots
+ 0 3c3cf780186642ae9741b3d3811e95da Tue 2020-11-24 14:29:44 CET▒<80><94>T>
+lines 1-1/1 (END)
+```
+
+### Journal persistent 
+
+  * Normalerweise (auf den meisten Systemen), überlebt das Journal kein Reboot 
+ 
+```
+## persistent setzen
+## Achtung: in /etc/systemd/journald.conf muss Storage=auto gesetzt sein
+## Dies ist auch der Default - Fall 
+## Achtung Achtung: Alle gezeigten Einträge mit # am Anfang sind die Default-Werte (in journald.conf) 
+mkdir /var/log/journal 
+systemctl restart systemd-journal-flush.service 
+
+```
+
+### Restrict how much is logged / data 
+
+```
+## in /etc/systemd/journald.conf 
+SystemMaxUse=1G 
+```
+
 
 ## Bash und Bash Programmierung 
 
@@ -300,8 +837,6 @@ lslbk --fs # zeigt uuid und filesystem - typ
 
 ```
 
-
-<div class="page-break"></div>
 
 ### Bash Programmierung
 
@@ -364,7 +899,7 @@ nobleprog@jochen-g14d:~$ echo $?
 0
 nobleprog@jochen-g14d:~$ man test
 
-## Be careful with spaces after [ and before ] (must have) 
+## Be careful with spaces after [ and before ](must have) 
 nobleprog@jochen-g14d:~$ [! -d /etc2]
 [!: command not found
 nobleprog@jochen-g14d:~$ [ ! -d /etc2 
@@ -418,8 +953,6 @@ done
 
 ```
 
-<div class="page-break"></div>
-
 ## Kernel
 
 ### Kernel Parameter
@@ -443,8 +976,6 @@ root@ubuntu01:/proc/sys/net/ipv4#
   * Centos/Redhat: man kernel-command-line
   * Ubuntu/Debian: man kernel-command-line 
 
-<div class="page-break"></div>
-
 ### Kernel kompilieren
 
 
@@ -458,8 +989,6 @@ root@ubuntu01:/proc/sys/net/ipv4#
   * https://www.tecmint.com/compile-linux-kernel-on-centos-7/
   * -- bitte nicht die Original-Anleitung von centos im wiki verwenden. 
 
-<div class="page-break"></div>
-
 ## Find
 
 ### Find
@@ -472,8 +1001,6 @@ root@ubuntu01:/proc/sys/net/ipv4#
 find / -name tmpfiles.d -type d 
 ```
 
-<div class="page-break"></div>
-
 ## Verzeichnisse und Dateien 
 
 ### Grundlegende Ordnerstruktur
@@ -482,8 +1009,6 @@ find / -name tmpfiles.d -type d
   * https://de.wikipedia.org/wiki/Filesystem_Hierarchy_Standard
   
  
-
-<div class="page-break"></div>
 
 ### Grundlegende Dateioperationen
 
@@ -591,8 +1116,6 @@ cp -a datei datei_neu
 cp -r verzeichnis verteichnis_neu 
 ```
 
-<div class="page-break"></div>
-
 ### Ausgabe von Dateien
 
 
@@ -605,8 +1128,6 @@ cat filename | less
 less filename 
 ```
 
-<div class="page-break"></div>
-
 ### Ausgabe von gepackten Files / Entpacken von Files
 
 
@@ -618,8 +1139,6 @@ cp /var/log/syslog.2.gz /root
 cd /root
 gzip -d syslog.2.gz 
 ```
-
-<div class="page-break"></div>
 
 ## Suche und Filtern 
 
@@ -677,8 +1196,6 @@ updatedb
 locate -e training.sh 
 ```
 
-<div class="page-break"></div>
-
 ### Übung mit Dateien filtern
 
 
@@ -694,8 +1211,6 @@ einen beliebigen Text über die Kommandozeile anfügen.
 das Heimatverzeichnis des Benutzer nobleprog kopieren.
 8. Alle Zeilen aus services ausgeben, die kein Kommentar (am Anfang der Zeile) enthalten und in die Datei kommentarlos im Heimatverzeichnis des Benutzer nobleprog schreiben.
 ```
-
-<div class="page-break"></div>
 
 ## Paketmanager (Ubuntu/Debian) und Software installieren
 
@@ -740,8 +1255,6 @@ apt-cache pkgnames pulse |xargs -n 1 apt-get -o Dpkg::Options::="--force-confmis
 apt remove package  # leave config-files 
 apt purge package # also delete config files
 ```
-
-<div class="page-break"></div>
 
 ### Software installieren
 
@@ -796,8 +1309,6 @@ apt upgrade
 apt dist-upgrade  
 ```
 
-<div class="page-break"></div>
-
 ### dnf
 
 
@@ -814,8 +1325,6 @@ dnf list --installed
 dnf list 
 ```
 
-
-<div class="page-break"></div>
 
 ### unattendend upgrades
 
@@ -852,8 +1361,6 @@ APT::Periodic::AutocleanInterval "7"
 0 directories, 3 files
 ```
 
-<div class="page-break"></div>
-
 ## Filesysteme  
 
 ### xfsdump und -restore
@@ -877,8 +1384,6 @@ APT::Periodic::AutocleanInterval "7"
 ## Bedeutet, was wurde bereits gesichert 
 xfsdump -I 
 ```
-
-<div class="page-break"></div>
 
 ## Sudo 
 
@@ -960,8 +1465,6 @@ su - wartung
 sudo systemctl restart httpd 
 ```
 
-<div class="page-break"></div>
-
 ## ssh und scp 
 
 ### ssh
@@ -976,8 +1479,6 @@ ssh 11trainingdo@56.34.12.11
 ```
 
 
-<div class="page-break"></div>
-
 ### scp
 
 
@@ -990,8 +1491,6 @@ TEMPDIR=$(mktemp -d)
 scp -r trn01@10.10.11.126:/home/trn01/ $TEMPDIR
 ```
 
-
-<div class="page-break"></div>
 
 ### ssh Kommandos auf Zielsystem ausführen
 
@@ -1024,8 +1523,6 @@ ssh trn01@10.10.11.126 'bash -s' < lokalesscript.sh
 cat lokalesscript.sh | ssh trn01@10.10.11.126
 ```
 
-<div class="page-break"></div>
-
 ## Bash und Bash-Programmierung 
 
 ### Strings escapen
@@ -1036,8 +1533,6 @@ TEST='Mooshäusl'\''s Fensterbau'
 echo $TEST 
 
 ```
-
-<div class="page-break"></div>
 
 ### Arbeiten auf der Bash
 
@@ -1201,8 +1696,6 @@ drwxr-xr-x 27 nobleprog nobleprog 4096 Oct  6 11:17 ..
 ls: cannot open directory 'newdir2': Permission denied
 ```
 
-<div class="page-break"></div>
-
 ## Editoren
 
 ### Vi/vim
@@ -1272,7 +1765,20 @@ ESC + u # eigentlich reicht 1x Escape
 ESC + 1000dd # ESC - Taste drücken, dann 1000 eingeben, dann dd (sie sehen die 1000 nicht auf dem Bildschirm) 
 ```
 
-<div class="page-break"></div>
+#### Neues Fenster und Fenster wechseln 
+
+```
+## innerhalb von vi 
+ESC + :  -> vsplit # aktuelles Fenster wird kopiert 
+## Fenster wechseln 
+ESC + : wincmd w 
+## oder 
+STRG + w w 
+```
+
+#### Cheatsheet
+
+http://www.atmos.albany.edu/daes/atmclasses/atm350/vi_cheat_sheet.pdf
 
 ## Logs 
 
@@ -1301,8 +1807,6 @@ or
 /var/log/messages or /var/log/syslog 
 
 ```
-
-<div class="page-break"></div>
 
 ## Firewall
 
@@ -1449,8 +1953,6 @@ firewall-cmd --runtime-to-permanent
   * https://www.linuxjournal.com/content/understanding-firewalld-multi-zone-configurations#:~:text=Going%20line%20by%20line%20through,or%20source%20associated%20with%20it.
   * https://www.answertopia.com/ubuntu/basic-ubuntu-firewall-configuration-with-firewalld/
 
-<div class="page-break"></div>
-
 ### ufw
 
 
@@ -1555,8 +2057,6 @@ ufw reset
 
   * https://www.digitalocean.com/community/tutorials/how-to-set-up-a-firewall-with-ufw-on-ubuntu-20-04-de
 
-<div class="page-break"></div>
-
 ## Hilfe 
 
 ### Hilfe
@@ -1598,8 +2098,6 @@ apropos befehl
 apropos copy files | grep copy | less
 
 ```
-
-<div class="page-break"></div>
 
 ## Benutzer verwalten 
 
@@ -1667,8 +2165,6 @@ usermod -s /usr/sbin/nologin training
 sudo userdel training 
 ```
 
-<div class="page-break"></div>
-
 ## Hilfreiche Programme 
 
 ### Hilfreiche Programme
@@ -1680,199 +2176,6 @@ sudo userdel training
 wc -l dateiname 
 cat /etc/services | wc -l 
 ```
-
-<div class="page-break"></div>
-
-## Prozesse
-
-### Prozesse
-
-
-#### pstree / Baum der Prozess anzeigen 
-
-```
-pstree -p | less 
-
-## beispiel mit finden der bash in welchen Prozessen
-pstree -p | grep bash 
-```
-
-#### top / Prozesse interaktiv betracht 
-
-```
-top 
-q # mit q verlassen 
-```
-
-```
-Bedeutung:
-load average: 0.08, 0.04, 0.00
-
-Wieviel Prozesse warten auf Ausführung durch die CPU in der/den letzten 1 min / 5 min / 15 min 
-```
-
-```
-## 
-MiB Swap:      0.0 total,      0.0 free,      0.0 used.   7107.8 avail Mem
-
-Swap - Daten die auf Festplatte ausgelagert werden, weil zu wenig Arbeitsspeicher da 
-=> Achtung: Sollte auf Servern möglichst nicht > 0 sein 
-=> Chef, ich brauche mehr Arbeitsspeicher (wenn > 0) 
-
-```
-
-#### ps - prozesse anzeigen als Liste 
-
-```
-Fall 1: Alle Prozesse anzeigen 
-
-## macht in der Regel als root 
-sudo ps aux | less
-sudo ps aux 
-
-## Information über bestimmtes kommando (Alle Prozesse)  
-ps aux | grep bash
-
-## Wieviel Prozesse 
-ps aux | grep bash | wc -l
-ps aux | grep -c bash
-```
-
-#### Beispiel: Prozess-Id (pid) finden 
-
-```
-## starter.sh ist das script was wir suchen 
-ps aux | grep starter.sh # Info in Spalte 2 (Spalte 1 = user) 
-
-## mit header
-ps aux | head --lines=1; ps aux | grep starter.sh
-```
-
-#### Beispiel: Prozess für Kommando in Files ausgeben
-
-```
-ps aux > /home/user/ausgabe.ps 
-```
-
-#### Beenden Programme im Vordergrund 
-
-```
-sleep 1000
-STRG + c # beendet das programm 
-```
-
-#### ps - optionen herleiten 
-
-```
-2 Varianten:
-ps aux 
-ps -ef 
-```
-
-```
-## Beispiele man-pages relativ weit 
-man ps 
-```
-
-```
-ps --help simple 
-```
-
-#### kill - Signale schicken an Prozesse
-
-kill sendet ein Signal an einen Prozess
-
-```
-## Alle möglichen Signale anzeigen 
-kill -L
-```
-
-```
-## das gleich wie STRG + c 
-kill -15 1123 # 1123 ist die Prozess ID 
-das gleich wie:
-kill 1123 # da 15 das Default Signal 
-```
-
-```
-## Pistolennummer
-## Wir haben uns Kind 2x vorgewarnt 
-kill -9 1123 
-```
-
-#### Besondere Signale 
-
-```
-SIGSTOP - STRG + z (Prozess stoppen und im Arbeitsspeicher behalten) 
-kill -19 1234 # SIGSTOP 
-
-##
-SIGHUP 
-kill -1 1234 # Reload Configuration File 
-```
-
-#### Prozess im 2. Terminal beenden 
-
-```
-## Terminal 1 
-## starter.sh starten 
-
-## Terminal 2
-ps aux | grep starter.sh 
-## Prozess mit PID (Prozess Id) killen -> z.b 1234
-kill 1234 
-
-## Terminal 2
-## Reagiert der Prozess nicht, dann -9 (SIGKILL) nachschieben
-kill -9 1234 
-```
-
-#### Prozesse im Hintergrund starten / Jobs
-
-```
-## Prozess läuft komplett im Hintergrund wenn keine Ausgaben
-## Ich kann weiter arbeiten im Terminal 
-starter.sh & 
-[1] 123607 # 1 = jobnr (nur in dieser session) // 123607 in allen Sessions verfügbar 
-
-```
-
-```
-## Zeige alle jobs an
-nobleprog@jochen-g14d:~/bin$ jobs 
-[1]+  Running                 starter.sh &
-## Schicke STOP signal = siehe kill -L
-nobleprog@jochen-g14d:~/bin$ kill -19 %1
-## War letzter Befehl erfolgreich 
-nobleprog@jochen-g14d:~/bin$ echo $?
-0
-
-[1]+  Stopped                 starter.sh
-nobleprog@jochen-g14d:~/bin$ fg starter.sh
-starter.sh # jetzt läuft er wieder im Vordergrund 
-```
-
-#### Script im Hintergrund laufen lassen (auch nach Terminal schliessen) 
-
-```
-## Terminal 1 
-nohup starter.sh & 
-ls -la nohup.out 
-## Terminal 1 schliessen
-
-## Terminal 2 
-## Script läuft nach schliessen von Terminal 1 noch 
-ps aux | grep starter.sh # Spalte 2: pid: z.b. 1234  
-kill 1234 
-
-```
-
-
-
-
-
-
-<div class="page-break"></div>
 
 ## Dienste verwalten 
 
@@ -1907,7 +2210,66 @@ systemctl list-units -t service
 journalctl -u apache2 
 ```
 
-<div class="page-break"></div>
+## Timer 
+
+### Beispiel - Regelmäßiges Scannen mit nmap
+
+
+### Walkthrough 
+
+```
+## Schritt 1:
+## /usr/local/sbin/scan.sh
+[root@centos8-01 sbin]# cat scan.sh
+##!/bin/bash
+IP_RANGE=192.168.56.100-103
+nmap -A -T4 $IP_RANGE
+
+## Schritt 2: service erstellen
+## systemctl edit --force --full scan.service 
+## /etc/systemd/system/scan.service
+[Unit]
+Description=nmap scanning of environment
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/scan.sh
+##RemainAfterExit=true
+StandardOutput=journal
+
+### nach dem Speichern kann man das bereits testen mit 
+## systemctl start scan.service 
+### Ergebnis im Journal 
+## journalctl -u scan.service 
+
+## Schritt 3: 
+## Timer angelegt :
+## systemctl edit --force --full scan.timer 
+## /etc/systemd/system/scan.timer
+[Unit]
+Description=Timer for Scan Service
+
+[Timer]
+OnCalendar=*:0/5
+
+[Install]
+WantedBy=basic.target
+
+## Schritt 4:
+## Timer starten und aktivieren
+systemctl enable scan.timer 
+systemctl start scan.timer 
+
+## Schritt 5:
+## Beobachten und glücklich sein 
+systemctl list-timers 
+## <- taucht der Timer dort auf 
+
+## Schritt 6:
+## Reboot 
+## und Danch : taucht der timer auf ? 
+systemctl list-timers 
+```
 
 ## Fragen,Tipps und Tricks
 
@@ -1975,8 +2337,6 @@ The answer is in Numpad in PuTTY while using vi [Cialug]:
 In the configuration, go to Terminal->Features and check "Disable application keypad mode". Save the settings and enjoy a numeric pad that works!
 ```
 
-<div class="page-break"></div>
-
 ### Tipps und Tricks
 
 
@@ -2021,4 +2381,8 @@ tree /home/centos01
 grep -r Listen /etc/httpd
 ```
 
-<div class="page-break"></div>
+## Documentation 
+
+### Digitalocean z.B. Apache 
+
+  * https://www.digitalocean.com/community/tutorials/how-to-secure-apache-with-let-s-encrypt-on-ubuntu-20-04-de
