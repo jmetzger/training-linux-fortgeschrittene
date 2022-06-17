@@ -31,6 +31,7 @@
     * [Grub mit Password absichern](/tipps_tricks/grub-mit-pw-sichern.md)
     * [Netzwerk Statistik](/tipps_tricks/netzwerk_statistik.md)
     * [Langsamen Server debuggen](/tipps_tricks/debug-slow-server.md)
+    * [Kleinen Server mit xinetd](/tipps_tricks/kleinen-server-mit-xinetd.md)
 
 ## Backlog 
 
