@@ -85,3 +85,25 @@ und wa - wert hoch
 # Während das Problem auftritt vergleichen 
 vmstat / iostat 
 ```
+
+## Informationen sammeln (wenn nagios/icinga nicht ausreicht) 
+
+
+
+```
+# Beispielscript 
+# vi /usr/local/bin/stats.sh 
+#!/bin/bash
+
+LOGTO=/var/log/stats.log
+DATUM=$(date)
+
+echo $DATUM >> $LOGTO
+free >> $LOGTO
+echo "MYSQL?" >> $LOGTO
+ps aux | grep mysql >> $LOGTO
+echo "Auslastung" >> $LOGTO
+uptime >> $LOGTO
+
+```
+
