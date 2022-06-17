@@ -23,6 +23,11 @@
     * [Cron](/cron.md)
     * [Debuggen eines langsamen Systems ](/tipps_tricks/debug-slow-server.md)
     * [ssh-Server absichern](/ssh-server-absichern.md)
+    * [Wiederkehrende administratorische Tätigkeiten](/recurring-admin-tasks.md)
+    * [sudo-Benutzer](sudo.md)
+
+ 1. Backups 
+    * [Backups mit tar](tar.md)
 
  1. Remoteverbindungen
     * [ssh public/private key](/ssh-public-private-key.md)
@@ -33,6 +38,9 @@
     * [Netzwerk Statistik](/tipps_tricks/netzwerk_statistik.md)
     * [Langsamen Server debuggen](/tipps_tricks/debug-slow-server.md)
     * [Kleinen Server mit xinetd](/tipps_tricks/kleinen-server-mit-xinetd.md)
+ 
+1. Exercises 
+   * [Exercise: sudo user](/exercises/sudo.md) 
 
 ## Backlog 
 
@@ -64,8 +72,6 @@
      * [unattendend upgrades](#unattendend-upgrades)
   1. Filesysteme  
      * [xfsdump und -restore](#xfsdump-und--restore)
-  1. Sudo 
-     * [sudo](#sudo)
   1. ssh und scp 
      * [ssh](#ssh)
      * [scp](#scp)
@@ -1001,6 +1007,30 @@ root@ubuntu01:/proc/sys/net/ipv4#
 find / -name tmpfiles.d -type d 
 ```
 
+### Search for all directories match 'ic' 
+
+```
+find / -type d -name '*ic*'
+```
+
+### Complex example with own script 
+
+```
+## vi /usr/local/bin/ausgabe.sh
+##!/bin/bash
+## $1 ist der 1. Parameter der nach dem Scriptname übergeben wird 
+## z.B. ausgabe.sh hallo
+echo "mein file...."$1 
+```
+
+```
+chmod u+x ausgabe.sh 
+```
+
+```
+find /etc/ -type f -name '*init*' -exec ausgabe.sh {} \;
+```
+
 ## Verzeichnisse und Dateien 
 
 ### Grundlegende Ordnerstruktur
@@ -1383,86 +1413,6 @@ APT::Periodic::AutocleanInterval "7"
 ## Zeigt das Inventar an
 ## Bedeutet, was wurde bereits gesichert 
 xfsdump -I 
-```
-
-## Sudo 
-
-### sudo
-
-
-#### Konfiguration 
-
-```
-Erfolgt in /etc/sudoers
-/etc/sudoers.d/ (Verzeichnis) 
-
-Entscheidend eine Zeile die mit % für Gruppe beginnt,
-z.B. mit passwort-eingabe des ausführenden Benutzers.
-
-Beispiel: Benutzer wäre training t
-training@foo$ sudo su - # Hier muss dann das Passwort von training eingegeben werden 
-
-## Allow members of group sudo to execute any command
-%sudo	ALL=(ALL:ALL) ALL
-## Nutzer training muss der Gruppe sudo angehören 
-
-```
-
-#### Konfigurations-Beispiel für Nobleprog 
-
-```
-root@jochen-g14d:/etc/sudoers.d# cat nobleprog 
-nobleprog ALL=(ALL:ALL) NOPASSWD:ALL
-```
-
-#### Sudo - User anlegen (root) 
-
-```
-apropos user # find command adduser 
-sudo adduser training 
-## is group sudo present on system 
-cat /etc/group | grep sudo
-man usermod # Supplementary Groups
-
-## Add user training to supplementary group
-usermod -aG sudo training 
-
-## Testing 
-su - training # change to user 
-sudo su - # find out if user training can execute sudo commands 
-```
-
-#### Einen Nutzer zum sudo nutzer machen 
-
-```
-## auf Debian / Ubuntu 
-## ist sudo also sudo - Gruppe definiert, die alles darf, was root darf
-usermod -aG sudo dein_benutzer 
-
-## auf Centos 
-usermod -aG wheel dein_benutzer 
-```
-
-#### Be careful to not have enabled rootpw = true  
-
-```
-## the you must enter your root password instead of the user password 
-
-```
-
-#### Eingeschränkte sudo - rechte für benutzer vergeben 
-
-```
-adduser wartung 
-cd /etc/sudoers.d 
-echo "wartung ALL=(ALL) /bin/systemctl restart httpd" > wartung 
-chmod 0440 wartung 
-
-
-### zum testen
-## from root user
-su - wartung 
-sudo systemctl restart httpd 
 ```
 
 ## ssh und scp 
